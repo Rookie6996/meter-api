@@ -6,9 +6,9 @@ const app = express();
 app.use(bodyParser.json());
 
 const db = mysql.createConnection({
-  host: "YOUR_DB_HOST",
-  user: "YOUR_DB_USER",
-  password: "YOUR_DB_PASSWORD",
+  host: "dpg-d6nul3v5gffc738564tg-a",
+  user: "meter_db_iy6o_user",
+  password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
   database: "meterdb"
 });
 
@@ -29,4 +29,5 @@ app.post("/save_meter", (req, res) => {
 
 app.listen(3000,()=>{
   console.log("Server running");
+
 });
