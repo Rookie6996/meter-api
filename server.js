@@ -1,35 +1,50 @@
 const express = require("express");
-const mysql = require("mysql2");
-const bodyParser = require("body-parser");
+const { Pool } = require("pg");
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
-const db = mysql.createConnection({
+const pool = new Pool({
   host: "dpg-d6nul3v5gffc738564tg-a",
   user: "meter_db_iy6o_user",
   password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
-  database: "meterdb"
-  port: 5432
+  database: "meterdb",
+  port: 5432,
+  ssl: { rejectUnauthorized: false }
 });
 
-app.post("/save_meter", (req, res) => {
+app.post("/save_meter", async (req, res) => {
 
   const { meter_number, latitude, longitude, site_id, user_id, timestamp } = req.body;
 
-  const sql = "INSERT INTO meter_records (meter_number, latitude, longitude, site_id, user_id, timestamp) VALUES (?,?,?,?,?,?)";
+  try {
 
-  db.query(sql, [meter_number, latitude, longitude, site_id, user_id, timestamp], (err,result)=>{
-      if(err){
-          return res.json({status:"error"});
-      }
-      res.json({status:"success"});
-  });
+    const query = `
+      INSERT INTO meter_records 
+      (meter_number, latitude, longitude, site_id, user_id, timestamp)
+      VALUES ($1,$2,$3,$4,$5,$6)
+    `;
+
+    await pool.query(query, [
+      meter_number,
+      latitude,
+      longitude,
+      site_id,
+      user_id,
+      timestamp
+    ]);
+
+    res.json({ status: "success" });
+
+  } catch (error) {
+
+    console.error(error);
+    res.json({ status: "error" });
+
+  }
 
 });
 
-app.listen(3000,()=>{
+app.listen(3000, () => {
   console.log("Server running");
-
 });
-
