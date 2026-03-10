@@ -10,6 +10,7 @@ const db = mysql.createConnection({
   user: "meter_db_iy6o_user",
   password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
   database: "meterdb"
+  port: 5432
 });
 
 app.post("/save_meter", (req, res) => {
@@ -31,3 +32,4 @@ app.listen(3000,()=>{
   console.log("Server running");
 
 });
+
