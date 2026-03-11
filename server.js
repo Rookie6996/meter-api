@@ -27,7 +27,7 @@ app.post("/save_meter", async (req, res) => {
     const query = `
       INSERT INTO meter_records 
       (meter_number, latitude, longitude, site_id, user_id, timestamp)
-      VALUES ($1,$2,$3,$4,$5,$6)
+      VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
     `;
 
     await pool.query(query, [
@@ -53,4 +53,5 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
+
 
