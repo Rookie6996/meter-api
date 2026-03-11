@@ -5,22 +5,19 @@ const app = express();
 app.use(express.json());
 
 const pool = new Pool({
-  host: "dpg-d6nul3v5gffc738564tg-a.oregon-postgres.render.com",
-  user: "meter_db_iy6o_user",
-  password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
-  database: "meter_db_iy6o",
-  port: 5432,
-  ssl: { rejectUnauthorized: false }
+  connectionString: "postgresql://meter_db_iy6o_user:DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe@dpg-d6nul3v5gffc738564tg-a.oregon-postgres.render.com/meter_db_iy6o",
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
-// ✅ ADD THIS PART HERE
 app.get("/", (req, res) => {
   res.send("Meter API is running");
 });
 
 app.post("/save_meter", async (req, res) => {
 
-  const { meter_number, latitude, longitude, site_id, user_id, timestamp } = req.body;
+  const { meter_number, latitude, longitude } = req.body;
 
   try {
 
@@ -33,10 +30,7 @@ app.post("/save_meter", async (req, res) => {
     await pool.query(query, [
       meter_number,
       latitude,
-      longitude,
-      site_id,
-      user_id,
-      timestamp
+      longitude
     ]);
 
     res.json({ status: "success" });
@@ -44,7 +38,10 @@ app.post("/save_meter", async (req, res) => {
   } catch (error) {
 
     console.error(error);
-    res.json({status:"error", message: error.message});
+    res.json({
+      status:"error",
+      message:error.message
+    });
 
   }
 
@@ -53,8 +50,3 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
-
-
-
-
-
