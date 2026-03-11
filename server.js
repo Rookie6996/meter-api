@@ -44,7 +44,7 @@ app.post("/save_meter", async (req, res) => {
   } catch (error) {
 
     console.error(error);
-    res.json({ status: "error" });
+    res.json({status:"error", message: error.message});
 
   }
 
@@ -53,5 +53,6 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
+
 
 
