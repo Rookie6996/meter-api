@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 const pool = new Pool({
-  host: "dpg-d6nul3v5gffc738564tg-a",
+  host: "dpg-d6nul3v5gffc738564tg-a.oregon-postgres.render.com",
   user: "meter_db_iy6o_user",
   password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
   database: "meter_db_iy6o",
@@ -53,6 +53,7 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
+
 
 
 
