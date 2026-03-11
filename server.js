@@ -13,6 +13,11 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
+// ✅ ADD THIS PART HERE
+app.get("/", (req, res) => {
+  res.send("Meter API is running");
+});
+
 app.post("/save_meter", async (req, res) => {
 
   const { meter_number, latitude, longitude, site_id, user_id, timestamp } = req.body;
@@ -48,3 +53,4 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
+
