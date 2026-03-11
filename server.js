@@ -8,7 +8,7 @@ const pool = new Pool({
   host: "dpg-d6nul3v5gffc738564tg-a",
   user: "meter_db_iy6o_user",
   password: "DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe",
-  database: "meterdb",
+  database: "meter_db_iy6o",
   port: 5432,
   ssl: { rejectUnauthorized: false }
 });
@@ -53,6 +53,7 @@ app.post("/save_meter", async (req, res) => {
 app.listen(3000, () => {
   console.log("Server running");
 });
+
 
 
 
