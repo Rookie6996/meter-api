@@ -4,7 +4,6 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
-
 // PostgreSQL connection
 const pool = new Pool({
   connectionString:
@@ -14,22 +13,18 @@ const pool = new Pool({
   }
 });
 
-
 // TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Meter API is running");
 });
 
-
 // CREATE TABLE
 app.get("/create_table", async (req, res) => {
-
   try {
-
     const query = `
     CREATE TABLE IF NOT EXISTS meter_records (
         id SERIAL PRIMARY KEY,
-        meter_number VARCHAR(50) UNIQUE,
+        meter_number VARCHAR(50),
         latitude DOUBLE PRECISION,
         longitude DOUBLE PRECISION,
         site_id VARCHAR(50),
@@ -41,16 +36,11 @@ app.get("/create_table", async (req, res) => {
     await pool.query(query);
 
     res.send("Table created successfully");
-
   } catch (error) {
-
     console.log(error);
     res.send(error.message);
-
   }
-
 });
-
 
 // SAVE METER DATA
 app.post("/save_meter", async (req, res) => {
@@ -89,12 +79,9 @@ app.post("/save_meter", async (req, res) => {
 
 });
 
-
 // GET ALL METERS
 app.get("/meters", async (req, res) => {
-
   try {
-
     const result = await pool.query(
       "SELECT * FROM meter_records ORDER BY id DESC"
     );
@@ -102,14 +89,10 @@ app.get("/meters", async (req, res) => {
     res.json(result.rows);
 
   } catch (error) {
-
     console.log(error);
     res.send(error.message);
-
   }
-
 });
-
 
 // SEARCH METER
 app.get("/meter/:meter", async (req, res) => {
@@ -133,7 +116,6 @@ app.get("/meter/:meter", async (req, res) => {
   }
 
 });
-
 
 // DELETE SINGLE METER
 app.delete("/delete_meter/:meter", async (req, res) => {
@@ -160,7 +142,6 @@ app.delete("/delete_meter/:meter", async (req, res) => {
 
 });
 
-
 // BULK DELETE METERS
 app.post("/bulk_delete", async (req,res)=>{
 
@@ -185,7 +166,6 @@ app.post("/bulk_delete", async (req,res)=>{
   }
 
 });
-
 
 // EXPORT ALL METERS TO EXCEL
 app.get("/export_excel", async (req, res) => {
@@ -215,7 +195,6 @@ app.get("/export_excel", async (req, res) => {
 
 });
 
-
 // AUTO CLEANUP AFTER 5 DAYS
 setInterval(async () => {
 
@@ -234,7 +213,6 @@ setInterval(async () => {
   }
 
 }, 86400000);
-
 
 // START SERVER
 app.listen(3000, () => {
