@@ -29,7 +29,7 @@ app.get("/create_table", async (req, res) => {
     const query = `
     CREATE TABLE IF NOT EXISTS meter_records (
         id SERIAL PRIMARY KEY,
-        meter_number VARCHAR(50),
+        meter_number VARCHAR(50) UNIQUE,
         latitude DOUBLE PRECISION,
         longitude DOUBLE PRECISION,
         site_id VARCHAR(50),
@@ -60,10 +60,10 @@ app.post("/save_meter", async (req, res) => {
   try {
 
     const query = `
-      INSERT INTO meter_records 
-(meter_number, latitude, longitude, site_id, user_id, timestamp)
-VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
-ON CONFLICT (meter_number) DO NOTHING
+      INSERT INTO meter_records
+      (meter_number, latitude, longitude, site_id, user_id, timestamp)
+      VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
+      ON CONFLICT (meter_number) DO NOTHING
     `;
 
     await pool.query(query, [
@@ -240,4 +240,3 @@ setInterval(async () => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
-
