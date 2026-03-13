@@ -134,7 +134,7 @@ app.get("/meter/:meter", async (req, res) => {
 });
 
 
-// DELETE METER MANUALLY
+// DELETE SINGLE METER
 app.delete("/delete_meter/:meter", async (req, res) => {
 
   try {
@@ -160,7 +160,33 @@ app.delete("/delete_meter/:meter", async (req, res) => {
 });
 
 
-// EXPORT ALL METERS TO EXCEL (CSV)
+// BULK DELETE METERS
+app.post("/bulk_delete", async (req,res)=>{
+
+  try{
+
+    const meters = req.body.meters;
+
+    await pool.query(
+      "DELETE FROM meter_records WHERE meter_number = ANY($1)",
+      [meters]
+    );
+
+    res.json({
+      status:"deleted"
+    });
+
+  }catch(error){
+
+    console.log(error);
+    res.send(error.message);
+
+  }
+
+});
+
+
+// EXPORT ALL METERS TO EXCEL
 app.get("/export_excel", async (req, res) => {
 
   try {
@@ -206,7 +232,7 @@ setInterval(async () => {
 
   }
 
-}, 86400000); // runs every 24 hours
+}, 86400000);
 
 
 // START SERVER
