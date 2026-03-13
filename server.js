@@ -61,8 +61,9 @@ app.post("/save_meter", async (req, res) => {
 
     const query = `
       INSERT INTO meter_records 
-      (meter_number, latitude, longitude, site_id, user_id, timestamp)
-      VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
+(meter_number, latitude, longitude, site_id, user_id, timestamp)
+VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
+ON CONFLICT (meter_number) DO NOTHING
     `;
 
     await pool.query(query, [
@@ -239,3 +240,4 @@ setInterval(async () => {
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
+
