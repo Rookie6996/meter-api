@@ -4,19 +4,22 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
+// PostgreSQL connection
 const pool = new Pool({
-  connectionString: "postgresql://meter_db_iy6o_user:DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe@dpg-d6nul3v5gffc738564tg-a.oregon-postgres.render.com/meter_db_iy6o",
+  connectionString:
+    "postgresql://meter_db_iy6o_user:DRtOxTnkGrxk4CgZtLSS6NkpNnpgrDXe@dpg-d6nul3v5gffc738564tg-a.oregon-postgres.render.com/meter_db_iy6o",
   ssl: {
     rejectUnauthorized: false
   }
 });
 
+// Test route
 app.get("/", (req, res) => {
   res.send("Meter API is running");
 });
 
 
-// ADD THIS ROUTE HERE 👇
+// CREATE TABLE
 app.get("/create_table", async (req, res) => {
 
   try {
@@ -47,7 +50,7 @@ app.get("/create_table", async (req, res) => {
 });
 
 
-// YOUR EXISTING ROUTE
+// SAVE METER DATA
 app.post("/save_meter", async (req, res) => {
 
   const { meter_number, latitude, longitude } = req.body;
@@ -66,20 +69,46 @@ app.post("/save_meter", async (req, res) => {
       longitude
     ]);
 
-    res.json({ status: "success" });
+    res.json({
+      status: "success"
+    });
 
   } catch (error) {
 
     console.error(error);
+
     res.json({
-      status:"error",
-      message:error.message
+      status: "error",
+      message: error.message
     });
 
   }
 
 });
 
+
+// GET ALL METERS (for checking data)
+app.get("/meters", async (req, res) => {
+
+  try {
+
+    const result = await pool.query(
+      "SELECT * FROM meter_records ORDER BY id DESC"
+    );
+
+    res.json(result.rows);
+
+  } catch (error) {
+
+    console.log(error);
+    res.send(error.message);
+
+  }
+
+});
+
+
+// START SERVER
 app.listen(3000, () => {
-  console.log("Server running");
+  console.log("Server running on port 3000");
 });
