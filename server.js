@@ -4,6 +4,7 @@ const { Pool } = require("pg");
 const app = express();
 app.use(express.json());
 
+
 // PostgreSQL connection
 const pool = new Pool({
   connectionString:
@@ -13,7 +14,8 @@ const pool = new Pool({
   }
 });
 
-// Test route
+
+// TEST ROUTE
 app.get("/", (req, res) => {
   res.send("Meter API is running");
 });
@@ -87,7 +89,7 @@ app.post("/save_meter", async (req, res) => {
 });
 
 
-// GET ALL METERS (for checking data)
+// GET ALL METERS
 app.get("/meters", async (req, res) => {
 
   try {
@@ -106,6 +108,105 @@ app.get("/meters", async (req, res) => {
   }
 
 });
+
+
+// SEARCH METER
+app.get("/meter/:meter", async (req, res) => {
+
+  try {
+
+    const meter = req.params.meter;
+
+    const result = await pool.query(
+      "SELECT * FROM meter_records WHERE meter_number=$1",
+      [meter]
+    );
+
+    res.json(result.rows);
+
+  } catch (error) {
+
+    console.log(error);
+    res.send(error.message);
+
+  }
+
+});
+
+
+// DELETE METER MANUALLY
+app.delete("/delete_meter/:meter", async (req, res) => {
+
+  try {
+
+    const meter = req.params.meter;
+
+    await pool.query(
+      "DELETE FROM meter_records WHERE meter_number=$1",
+      [meter]
+    );
+
+    res.json({
+      status: "deleted"
+    });
+
+  } catch (error) {
+
+    console.log(error);
+    res.send(error.message);
+
+  }
+
+});
+
+
+// EXPORT ALL METERS TO EXCEL (CSV)
+app.get("/export_excel", async (req, res) => {
+
+  try {
+
+    const result = await pool.query(
+      "SELECT meter_number, latitude, longitude, timestamp FROM meter_records ORDER BY timestamp DESC"
+    );
+
+    let csv = "meter_number,latitude,longitude,timestamp\n";
+
+    result.rows.forEach(r => {
+      csv += `${r.meter_number},${r.latitude},${r.longitude},${r.timestamp}\n`;
+    });
+
+    res.header("Content-Type", "text/csv");
+    res.attachment("meter_records.csv");
+    res.send(csv);
+
+  } catch (error) {
+
+    console.log(error);
+    res.send(error.message);
+
+  }
+
+});
+
+
+// AUTO CLEANUP AFTER 5 DAYS
+setInterval(async () => {
+
+  try {
+
+    await pool.query(
+      "DELETE FROM meter_records WHERE timestamp < EXTRACT(EPOCH FROM NOW()) - (5 * 24 * 60 * 60)"
+    );
+
+    console.log("Old records older than 5 days deleted");
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+}, 86400000); // runs every 24 hours
 
 
 // START SERVER
