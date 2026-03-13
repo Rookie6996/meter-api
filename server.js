@@ -60,7 +60,7 @@ app.post("/save_meter", async (req, res) => {
   try {
 
     const query = `
-      INSERT INTO meter_records 
+      INSERT INTO meter_records
       (meter_number, latitude, longitude, site_id, user_id, timestamp)
       VALUES ($1,$2,$3,'SITE1','TECH1',EXTRACT(EPOCH FROM NOW()))
     `;
@@ -215,16 +215,29 @@ app.get("/export_excel", async (req, res) => {
 });
 
 
-// AUTO CLEANUP AFTER 5 DAYS
+// DAILY CLEANUP JOB
 setInterval(async () => {
 
   try {
 
-    await pool.query(
-      "DELETE FROM meter_records WHERE timestamp < EXTRACT(EPOCH FROM NOW()) - (5 * 24 * 60 * 60)"
-    );
+    // REMOVE DUPLICATES (keep latest scan)
+    await pool.query(`
+      DELETE FROM meter_records a
+      USING meter_records b
+      WHERE a.meter_number = b.meter_number
+      AND a.id < b.id
+    `);
 
-    console.log("Old records older than 5 days deleted");
+    console.log("Duplicate records removed");
+
+
+    // DELETE RECORDS OLDER THAN 5 DAYS
+    await pool.query(`
+      DELETE FROM meter_records
+      WHERE timestamp < EXTRACT(EPOCH FROM NOW()) - (5 * 24 * 60 * 60)
+    `);
+
+    console.log("Records older than 5 days deleted");
 
   } catch (error) {
 
@@ -232,7 +245,7 @@ setInterval(async () => {
 
   }
 
-}, 86400000);
+}, 86400000); // runs every 24 hours
 
 
 // START SERVER
