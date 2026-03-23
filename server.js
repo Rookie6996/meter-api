@@ -7,8 +7,7 @@ app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-  connectionString:
-    connectionString: "postgresql://postgres:Terafitoorjabsechadhgayare@db.ewzaadzntrrztofbezx.supabase.co:5432/postgres",
+  connectionString: "postgresql://postgres:RexOedipus%23181%23@db.ewzaadzntrrztofbezx.supabase.co:5432/postgres",
   ssl: {
     rejectUnauthorized: false
   }
