@@ -7,13 +7,13 @@ app.use(express.json());
 
 // PostgreSQL connection
 const pool = new Pool({
-  connectionString: "postgresql://postgres:MeterApp%40123@db.ewzaadzntnrztofebezx.supabase.co:5432/postgres",
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 });
 
-console.log("USING DB HOST:", "db.ewzaadzntnrztofebezx.supabase.co");
+console.log("Using DB URL from ENV");
 
 // TEST ROUTE
 app.get("/", (req, res) => {
