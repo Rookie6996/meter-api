@@ -13,7 +13,7 @@ const pool = new Pool({
   }
 });
 
-console.log("USING DB HOST:", "db.ewzaadzntnrztofbezex.supabase.co");
+console.log("USING DB HOST:", "db.ewzaadzntnrztofebezx.supabase.co");
 
 // TEST ROUTE
 app.get("/", (req, res) => {
