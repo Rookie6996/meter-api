@@ -12,7 +12,7 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
-
+console.log("DB URL:", "postgresql://postgres:RexOedipus%23181%23@db.ewzaadzntrrztofbezx.supabase.co:5432/postgres");
 
 // TEST ROUTE
 app.get("/", (req, res) => {
